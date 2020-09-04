@@ -1,0 +1,63 @@
+﻿@model TestDevWebApp.Models.UserDto
+
+<h2>Hello, @Model.Username you have @Model.RoleDescription account!.</h2>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<div class="">
+    @if (Model.RoleDescription == "Admin")
+    {
+        <div class="form-row">
+            <div class="col">
+                <select asp-for="UserList" asp-items="Model.UserList" name="userName" class="form-control"></select>
+            </div>
+            <div class="col">
+                @Html.AntiForgeryToken()
+                <input type="button" class="btn btn-info form-control" value="Get Data" onclick="OnSubmit()" />
+            </div>
+
+        </div>
+        <div class="form-row" id="showCase" style="margin-top:50px">
+            <table class="table" id="itemsTable">
+            </table>
+        </div>
+    }
+    else
+    {
+        <table class="table">
+        </table>
+    }
+</div>
+<script>
+   
+    if ('@Model.RoleDescription' == 'Guest') {
+        OnSubmit();
+    }
+
+    function OnSubmit() {
+        let url = "/Home/GetData";
+        var name = "";
+        if ('@Model.RoleDescription' == 'Guest')
+            name = '@Model.Username';
+        else
+            name =  $("#UserList option:selected").val();
+        let users = {
+            UserName: name,
+            RoleDescription: '@Model.RoleDescription',
+            UserList: null
+        };
+        axios({
+            method: 'post',
+            url: url,
+            data: users
+        })
+            .then
+            (data => {
+                $('.table').empty();
+                $('.table').append('<thead class="thead-dark"><tr><th scope="col">#</th><th scope="col">Name</th><th scope="col">Game</th><th scope="col">Quantity</th></tr></thead><tbody id="tableBody"></tbody>')
+
+                for (var i = 0; i < data.data.items.length; i++) {
+                    $('.table > tbody').append('<tr><td>' + (i + 1) + '</td><td>' + data.data.items[i].name + '</td><td>' + data.data.items[i].game + '</td><td>'+ data.data.items[i].quantity+'</td></tr>');
+                }
+            }).catch(err => alert(err))
+    }
+</script>
