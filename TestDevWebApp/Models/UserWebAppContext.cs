@@ -63,6 +63,34 @@ namespace TestDevWebApp.Models
                 //    .HasForeignKey(d => d.IdRole)
                 //    .HasConstraintName("FK_idUser_idRole");
             });
+
+            modelBuilder.Entity<Role>().HasData(
+                new Role
+                {
+                    IdRole = 1,
+                    RoleDescription = "Admin"
+                },
+                new Role
+                {
+                    IdRole = 2,
+                    RoleDescription = "Guest"
+                });
+
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    IdUser = 1,
+                    Username = "cecilia",
+                    Password = "cecilia1",
+                    IdRole = 1
+                },
+                new User
+                {
+                    IdUser=2,
+                    Username="ana",
+                    Password="ana1",
+                    IdRole=2
+                });
         }
     }
 }
